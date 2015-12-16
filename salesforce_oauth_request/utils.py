@@ -34,7 +34,6 @@ def login(username = None,
         r = token_login(username = username,
                         password = password,
                         token = token,
-                        sandbox = sandbox,
                         client_id = client_id,
                         client_secret = client_secret)
     else:
@@ -141,15 +140,14 @@ def oauth_flow(s, oauth_url, username=None, password=None, sandbox=False):
 
     base = "https://login.salesforce.com" if not sandbox else "https://test.salesforce.com"
     r2 = s.post(base, data)
-    m = re.search("window.location.href\s*='(.[^']+)'", r2.text)
-    assert m is not None, "Couldn't find location.href expression in page %s (Username or password is wrong)" % r2.url
+    m = re.search("window.location.href\s*=\"(.[^\"]+)\"", r2.text)
+    assert m is not None, "Couldn't find location.href expression in first page %s (Username or password is wrong)\nTotal Text:\n%s" % (r2.url, r2.text)
 
     u3 = "https://" +  urlparse.urlparse(r2.url).hostname + m.group(1)
     r3 = s.get(u3)
 
     m = re.search("window.location.href\s*='(.[^']+)'", r3.text)
-
-    assert m is not None, "Couldn't find location.href expression in page %s:\n%s" % (r3.url, r3.text)
+    assert m is not None, "Couldn't find location.href expression in second page %s (Username or password is wrong)\nTotal Text:\n%s" % (r3.url, r3.text)
 
     return m.group(1)
 
