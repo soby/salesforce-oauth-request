@@ -3,3 +3,6 @@ salesforce_oauth_request.egg-info*
 build/*
 dist/*
 *.pyc
+.project
+.pydevproject
+test_settings
