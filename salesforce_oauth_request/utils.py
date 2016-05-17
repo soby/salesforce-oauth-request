@@ -140,7 +140,7 @@ def oauth_flow(s, oauth_url, username=None, password=None, sandbox=False):
 
     base = "https://login.salesforce.com" if not sandbox else "https://test.salesforce.com"
     r2 = s.post(base, data)
-    m = re.search("window.location.href\s*=\'(.[^\']+)'", r2.text)
+    m = re.search("window.location.href\s*=\'.[^\']+?(/setup/.[^\']+)'", r2.text)
     assert m is not None, "Couldn't find location.href expression in first page %s (Username or password is wrong)\nTotal Text:\n%s" % (r2.url, r2.text)
 
     u3 = "https://" +  urlparse.urlparse(r2.url).hostname + m.group(1)
